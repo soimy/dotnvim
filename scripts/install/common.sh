@@ -142,18 +142,24 @@ install_python_provider() {
   fi
 }
 
+nvim_bootstrap_args() {
+  printf 'env XDG_CONFIG_HOME=%q NVIM_APPNAME=%q nvim' "$(dirname "$DOTNVIM_ROOT")" "$(basename "$DOTNVIM_ROOT")"
+}
+
 sync_lazyvim() {
   if is_dry_run; then
     log "syncing LazyVim plugins"
-    printf "[dry-run] nvim --headless '+Lazy! sync' '+qa'\n"
-    printf "[dry-run] nvim --headless \"+lua require('config.bootstrap').mason_sync()\" '+qa'\n"
+    printf "[dry-run] %s --headless '+Lazy! sync' '+qa'\n" "$(nvim_bootstrap_args)"
+    printf "[dry-run] %s --headless \"+lua require('config.bootstrap').mason_sync()\" '+qa'\n" "$(nvim_bootstrap_args)"
     return 0
   fi
   command -v nvim >/dev/null 2>&1 || die "nvim not found after dependency install"
   log "syncing LazyVim plugins"
-  nvim --headless '+Lazy! sync' '+qa'
+  env XDG_CONFIG_HOME="$(dirname "$DOTNVIM_ROOT")" NVIM_APPNAME="$(basename "$DOTNVIM_ROOT")" \
+    nvim --headless '+Lazy! sync' '+qa'
   log "waiting for Mason tools to finish installing"
-  nvim --headless "+lua require('config.bootstrap').mason_sync()" '+qa'
+  env XDG_CONFIG_HOME="$(dirname "$DOTNVIM_ROOT")" NVIM_APPNAME="$(basename "$DOTNVIM_ROOT")" \
+    nvim --headless "+lua require('config.bootstrap').mason_sync()" '+qa'
 }
 
 install_optional_pkg() {
