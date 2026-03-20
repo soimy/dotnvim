@@ -6,8 +6,7 @@ function M.mason_sync(timeout_ms)
     return
   end
 
-  local plugin = require("lazy.core.config").plugins["mason.nvim"]
-  local tools = vim.tbl_get(plugin, "opts", "ensure_installed") or {}
+  local tools = (LazyVim and LazyVim.opts("mason.nvim").ensure_installed) or {}
   local refreshed = false
 
   mr.refresh(function()
