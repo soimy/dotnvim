@@ -2,6 +2,8 @@
 
 My Neovim configuration based on [LazyVim](https://www.lazyvim.org/).
 
+[简体中文说明](./README.zh-CN.md)
+
 ## Stack
 
 - Neovim
