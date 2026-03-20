@@ -65,3 +65,17 @@ Open Neovim and run:
 - Ruby and Perl Neovim providers are disabled.
 - Some optional image preview features depend on extra system packages and are not required for normal coding workflows.
 - `lazygit` is treated as optional on some Linux distributions where the package may not exist in the default repo.
+
+## Bazzite / image-based Fedora
+
+For Bazzite and similar `rpm-ostree` / `bootc` systems, it is usually more convenient to run this inside a `distrobox` instead of layering everything onto the host.
+
+Example:
+
+```bash
+distrobox create --name dotnvim-fedora --image registry.fedoraproject.org/fedora:43 --yes
+distrobox enter dotnvim-fedora
+git clone https://github.com/soimy/dotnvim ~/.config/nvim
+cd ~/.config/nvim
+./bootstrap.sh
+```
