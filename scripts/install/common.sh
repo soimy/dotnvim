@@ -146,11 +146,14 @@ sync_lazyvim() {
   if is_dry_run; then
     log "syncing LazyVim plugins"
     printf "[dry-run] nvim --headless '+Lazy! sync' '+qa'\n"
+    printf "[dry-run] nvim --headless \"+lua require('config.bootstrap').mason_sync()\" '+qa'\n"
     return 0
   fi
   command -v nvim >/dev/null 2>&1 || die "nvim not found after dependency install"
   log "syncing LazyVim plugins"
   nvim --headless '+Lazy! sync' '+qa'
+  log "waiting for Mason tools to finish installing"
+  nvim --headless "+lua require('config.bootstrap').mason_sync()" '+qa'
 }
 
 install_optional_pkg() {
