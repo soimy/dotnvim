@@ -19,10 +19,17 @@ My Neovim configuration based on [LazyVim](https://www.lazyvim.org/).
 - `lazygit`
 - `tree-sitter` CLI
 
-Recommended on macOS:
+Supported package managers:
+
+- Homebrew on macOS
+- `apt` on Ubuntu/Debian
+- `pacman` on Arch
+- `dnf` on Fedora
+
+Example for macOS:
 
 ```bash
-brew install neovim fd ripgrep fzf tmux lazygit tree-sitter
+brew install neovim fd ripgrep fzf lazygit tree-sitter
 ```
 
 ## Install
@@ -33,18 +40,17 @@ Clone directly to the Neovim config path:
 git clone https://github.com/soimy/dotnvim ~/.config/nvim
 ```
 
-Then install runtime dependencies:
+Run the bootstrap script:
 
 ```bash
-npm config set prefix ~/.local
-npm install -g neovim @mermaid-js/mermaid-cli
-python3 -m pip install --user --break-system-packages --upgrade pynvim
+cd ~/.config/nvim
+./bootstrap.sh
 ```
 
-Sync plugins:
+Preview without changing the machine:
 
 ```bash
-nvim --headless '+Lazy! sync' '+qa'
+./bootstrap.sh --dry-run
 ```
 
 Open Neovim and run:
@@ -58,3 +64,4 @@ Open Neovim and run:
 - This config intentionally uses `Snacks` as the main picker/UI path.
 - Ruby and Perl Neovim providers are disabled.
 - Some optional image preview features depend on extra system packages and are not required for normal coding workflows.
+- `lazygit` is treated as optional on some Linux distributions where the package may not exist in the default repo.
