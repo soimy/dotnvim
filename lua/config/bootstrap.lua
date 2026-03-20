@@ -8,13 +8,19 @@ function M.mason_sync(timeout_ms)
 
   local tools = (LazyVim and LazyVim.opts("mason.nvim").ensure_installed) or {}
   local refreshed = false
+  local failed = {}
 
   mr.refresh(function()
     refreshed = true
     for _, tool in ipairs(tools) do
       local pkg = mr.get_package(tool)
-      if not pkg:is_installed() and not pkg:is_installing() then
-        pkg:install()
+      if not pkg:is_installed() then
+        pkg:once("install:failed", function()
+          failed[tool] = true
+        end)
+        if not pkg:is_installing() then
+          pkg:install()
+        end
       end
     end
   end)
@@ -25,7 +31,7 @@ function M.mason_sync(timeout_ms)
     end
     for _, tool in ipairs(tools) do
       local pkg = mr.get_package(tool)
-      if not pkg:is_installed() then
+      if not pkg:is_installed() and not failed[tool] then
         return false
       end
     end
@@ -34,6 +40,12 @@ function M.mason_sync(timeout_ms)
 
   if not ok_wait then
     error("Timed out waiting for Mason tools to install")
+  end
+
+  if next(failed) then
+    local failed_tools = vim.tbl_keys(failed)
+    table.sort(failed_tools)
+    print("[dotnvim] Mason tools failed: " .. table.concat(failed_tools, ", "))
   end
 end
 
