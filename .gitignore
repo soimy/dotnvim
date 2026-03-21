@@ -7,5 +7,6 @@ foo.*
 *.log
 .nvimlog
 .tmux/
+.tools/
 data
 .DS_Store
