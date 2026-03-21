@@ -1,0 +1,117 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "useGitignore": true,
+  "patterns": [
+    {
+      "name": "identifier",
+      "pattern": "/\\b[$A-Za-z_][$A-Za-z0-9_]*\\b/g"
+    },
+    {
+      "name": "line-comment-hash",
+      "pattern": "/#.*$/gm"
+    },
+    {
+      "name": "line-comment-double-dash",
+      "pattern": "/--.*$/gm"
+    },
+    {
+      "name": "line-comment-vim",
+      "pattern": "/^\\s*\".*$/gm"
+    },
+    {
+      "name": "block-comment-lua",
+      "pattern": "/--\\[\\[[\\s\\S]*?\\]\\]/g"
+    },
+    {
+      "name": "python-docstring",
+      "pattern": "/(?:'''[\\s\\S]*?'''|\\\"\\\"\\\"[\\s\\S]*?\\\"\\\"\\\")/g"
+    }
+  ],
+  "ignoreRegExpList": [
+    "/[\\u3400-\\u4DBF\\u4E00-\\u9FFF\\uF900-\\uFAFF]+/g"
+  ],
+  "languageSettings": [
+    {
+      "languageId": [
+        "c",
+        "cpp",
+        "css",
+        "go",
+        "java",
+        "javascript",
+        "javascriptreact",
+        "rust",
+        "scss",
+        "typescript",
+        "typescriptreact"
+      ],
+      "includeRegExpList": [
+        "identifier",
+        "CStyleComment"
+      ]
+    },
+    {
+      "languageId": [
+        "bash",
+        "cmake",
+        "dockerfile",
+        "sh",
+        "toml",
+        "yaml",
+        "zsh"
+      ],
+      "includeRegExpList": [
+        "identifier",
+        "line-comment-hash"
+      ]
+    },
+    {
+      "languageId": [
+        "python"
+      ],
+      "includeRegExpList": [
+        "identifier",
+        "line-comment-hash",
+        "python-docstring"
+      ]
+    },
+    {
+      "languageId": [
+        "lua",
+        "sql"
+      ],
+      "includeRegExpList": [
+        "identifier",
+        "line-comment-double-dash",
+        "block-comment-lua"
+      ]
+    },
+    {
+      "languageId": [
+        "vim"
+      ],
+      "includeRegExpList": [
+        "identifier",
+        "line-comment-vim"
+      ]
+    },
+    {
+      "languageId": [
+        "html",
+        "xml"
+      ],
+      "includeRegExpList": [
+        "/<!--[\\s\\S]*?-->/g"
+      ]
+    },
+    {
+      "languageId": [
+        "jsonc"
+      ],
+      "includeRegExpList": [
+        "CStyleComment"
+      ]
+    }
+  ]
+}
