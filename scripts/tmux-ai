@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+CONFIG_FILE="$ROOT_DIR/tmux/tmux.conf"
+PLUGINS_DIR="$ROOT_DIR/.tmux/plugins"
+TPM_DIR="$PLUGINS_DIR/tpm"
+SOCKET_NAME="${TMUX_AI_SOCKET:-ai}"
+SESSION_NAME="${TMUX_AI_SESSION:-ai}"
+
+export TMUX_PLUGIN_MANAGER_PATH="$PLUGINS_DIR/"
+
+install_tpm() {
+  mkdir -p "$PLUGINS_DIR"
+  if [ ! -d "$TPM_DIR/.git" ]; then
+    git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_DIR"
+  fi
+}
+
+install_plugins() {
+  install_tpm
+  if [ -x "$TPM_DIR/bin/install_plugins" ]; then
+    XDG_CONFIG_HOME="$ROOT_DIR" TMUX_PLUGIN_MANAGER_PATH="$TMUX_PLUGIN_MANAGER_PATH" "$TPM_DIR/bin/install_plugins"
+  fi
+}
+
+doctor() {
+  cat <<EOF
+tmux: $(tmux -V)
+config: $CONFIG_FILE
+plugins: $PLUGINS_DIR
+socket: $SOCKET_NAME
+session: $SESSION_NAME
+TERM outside tmux: ${TERM:-unknown}
+EOF
+}
+
+case "${1:-}" in
+  --install)
+    install_plugins
+    exit 0
+    ;;
+  --doctor)
+    doctor
+    exit 0
+    ;;
+  --help|-h)
+    cat <<EOF
+Usage: $(basename "$0") [--install|--doctor|tmux args...]
+
+No arguments:
+  Start or attach to the dedicated AI tmux session.
+
+Examples:
+  $(basename "$0")
+  $(basename "$0") --install
+  $(basename "$0") list-keys
+EOF
+    exit 0
+    ;;
+esac
+
+if [ ! -x "$TPM_DIR/tpm" ]; then
+  install_plugins
+fi
+
+if [ "$#" -eq 0 ]; then
+  exec tmux -L "$SOCKET_NAME" -f "$CONFIG_FILE" new-session -A -s "$SESSION_NAME"
+fi
+
+exec tmux -L "$SOCKET_NAME" -f "$CONFIG_FILE" "$@"

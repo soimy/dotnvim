@@ -5,5 +5,7 @@ debug
 .repro
 foo.*
 *.log
+.nvimlog
+.tmux/
 data
 .DS_Store

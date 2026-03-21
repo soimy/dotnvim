@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+HOME_DIR="${HOME:?HOME is required}"
+TARGET_DIR="$HOME_DIR/.config/tmux"
+TARGET_FILE="$TARGET_DIR/tmux.conf"
+PLUGIN_DIR="$TARGET_DIR/plugins"
+TPM_DIR="$PLUGIN_DIR/tpm"
+TEMPLATE_FILE="$ROOT_DIR/tmux/global.tmux.conf.template"
+TMP_FILE="$(mktemp)"
+BACKUP_FILE=""
+
+cleanup() {
+  rm -f "$TMP_FILE"
+}
+trap cleanup EXIT
+
+mkdir -p "$TARGET_DIR" "$PLUGIN_DIR"
+
+if [ -f "$TARGET_FILE" ]; then
+  BACKUP_FILE="$TARGET_FILE.bak.$(date +%Y%m%d-%H%M%S)"
+  cp "$TARGET_FILE" "$BACKUP_FILE"
+fi
+
+sed "s|__HOME__|$HOME_DIR|g" "$TEMPLATE_FILE" > "$TMP_FILE"
+install -m 0644 "$TMP_FILE" "$TARGET_FILE"
+
+if [ ! -d "$TPM_DIR/.git" ]; then
+  git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_DIR"
+fi
+
+XDG_CONFIG_HOME="$HOME_DIR/.config" \
+TMUX_PLUGIN_MANAGER_PATH="$PLUGIN_DIR/" \
+"$TPM_DIR/bin/install_plugins"
+
+cat <<EOF
+Installed global tmux config:
+  $TARGET_FILE
+
+Plugin directory:
+  $PLUGIN_DIR
+EOF
+
+if [ -n "$BACKUP_FILE" ]; then
+  printf 'Backup created:\n  %s\n' "$BACKUP_FILE"
+fi
