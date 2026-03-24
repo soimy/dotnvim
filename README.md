@@ -55,11 +55,30 @@ Preview without changing the machine:
 ./bootstrap.sh --dry-run
 ```
 
+Install the standalone `mosh` helper:
+
+```bash
+./scripts/install-global-mosh-config
+```
+
 Open Neovim and run:
 
 ```vim
 :checkhealth
 ```
+
+## Mosh Helper
+
+The standalone installer provisions `mosh` and installs `mosh-connect` to `~/.local/bin/mosh-connect`.
+
+Example:
+
+```bash
+mosh-connect user@example.com
+mosh-connect user@example.com --ssh='ssh -p 2222'
+```
+
+The remote host also needs `mosh-server` available, which usually means installing `mosh` on the remote machine too.
 
 ## Notes
 
@@ -67,6 +86,15 @@ Open Neovim and run:
 - Ruby and Perl Neovim providers are disabled.
 - Some optional image preview features depend on extra system packages and are not required for normal coding workflows.
 - `lazygit` is treated as optional on some Linux distributions where the package may not exist in the default repo.
+
+## Agent Notes
+
+This repository is a personal cloud-synced configuration project. For agent-assisted changes:
+
+- prefer direct, pragmatic edits over heavyweight process
+- do not require heavy TDD for simple shell, config, or documentation updates
+- do not require git worktrees by default; working directly on the current branch is acceptable unless isolation is explicitly requested
+- use lightweight verification that matches the scope, such as shell syntax checks, smoke tests, or focused manual verification
 
 ## Bazzite / image-based Fedora
 

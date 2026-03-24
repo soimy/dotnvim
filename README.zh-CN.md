@@ -55,11 +55,30 @@ cd ~/.config/nvim
 ./bootstrap.sh --dry-run
 ```
 
+安装独立的 `mosh` 辅助脚本：
+
+```bash
+./scripts/install-global-mosh-config
+```
+
 打开 Neovim 后执行：
 
 ```vim
 :checkhealth
 ```
+
+## Mosh 辅助脚本
+
+这个独立安装脚本会安装 `mosh`，并把 `mosh-connect` 部署到 `~/.local/bin/mosh-connect`。
+
+示例：
+
+```bash
+mosh-connect user@example.com
+mosh-connect user@example.com --ssh='ssh -p 2222'
+```
+
+远端主机也需要有 `mosh-server`，通常就是在远端同样安装 `mosh`。
 
 ## 说明
 
@@ -67,6 +86,15 @@ cd ~/.config/nvim
 - Ruby 和 Perl 的 Neovim provider 默认关闭。
 - 某些图片预览能力依赖额外系统包，不影响日常编码。
 - 在部分 Linux 发行版里，`lazygit` 可能不在默认仓库中；脚本会把它当作可选项处理。
+
+## Agent 约束
+
+这是一个个人配置云端化项目。对于智能体协作，请遵循：
+
+- 优先直接、务实地修改，不要引入过重流程
+- 简单的 shell、配置或文档改动，不要求重型 TDD
+- 默认不要求使用 git worktree；除非明确要求隔离开发，否则可以直接在当前分支上工作
+- 验证方式以轻量为主，按改动范围选择 shell 语法检查、smoke test 或针对性的手动验证
 
 ## Bazzite / 基于镜像的 Fedora
 
