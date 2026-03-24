@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if [[ $# -lt 1 ]]; then
+  cat <<'USAGE'
+Usage: mosh-connect <destination> [mosh args...]
+
+Examples:
+  mosh-connect user@example.com
+  mosh-connect user@example.com --ssh='ssh -p 2222'
+USAGE
+  exit 1
+fi
+
+if ! command -v mosh >/dev/null 2>&1; then
+  printf 'mosh-connect: mosh is not installed or not on PATH\n' >&2
+  exit 1
+fi
+
+exec mosh "$@"

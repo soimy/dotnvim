@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+HOME_DIR="${HOME:?HOME is required}"
+LOCAL_BIN_DIR="$HOME_DIR/.local/bin"
+WRAPPER_PATH="$LOCAL_BIN_DIR/mosh-connect"
+SOURCE_WRAPPER="$ROOT_DIR/scripts/mosh-connect"
+
+# shellcheck source=scripts/install/common.sh
+source "$ROOT_DIR/scripts/install/common.sh"
+
+install_mosh_package() {
+  case "$(uname -s)" in
+    Darwin)
+      command -v brew >/dev/null 2>&1 || die "Homebrew is required on macOS"
+      log "installing mosh via Homebrew"
+      run brew install mosh
+      ;;
+    Linux)
+      if command -v apt-get >/dev/null 2>&1; then
+        log "installing mosh via apt"
+        sudo_run apt-get update
+        sudo_run apt-get install -y mosh
+      elif command -v pacman >/dev/null 2>&1; then
+        log "installing mosh via pacman"
+        sudo_run pacman -Sy --needed --noconfirm mosh
+      elif command -v dnf >/dev/null 2>&1; then
+        log "installing mosh via dnf"
+        sudo_run dnf install -y mosh
+      else
+        die "unsupported Linux package manager: expected apt-get, pacman, or dnf"
+      fi
+      ;;
+    *)
+      die "unsupported platform: $(uname -s)"
+      ;;
+  esac
+}
+
+write_wrapper() {
+  mkdir -p "$LOCAL_BIN_DIR"
+  [[ -f "$SOURCE_WRAPPER" ]] || die "wrapper source not found: $SOURCE_WRAPPER"
+  install -m 0755 "$SOURCE_WRAPPER" "$WRAPPER_PATH"
+}
+
+main() {
+  install_mosh_package
+  write_wrapper
+
+  cat <<EOF
+Installed mosh wrapper:
+  $WRAPPER_PATH
+
+Example:
+  mosh-connect user@example.com
+
+Remote note:
+  The remote host also needs mosh-server available, usually by installing mosh.
+EOF
+}
+
+main "$@"
