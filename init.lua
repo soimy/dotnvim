@@ -5,6 +5,11 @@ vim.g.python3_host_prog = vim.fn.exepath("python3")
 local node_host = vim.fn.expand("~/.local/lib/node_modules/neovim/bin/cli.js")
 if vim.fn.filereadable(node_host) == 1 then
   vim.g.node_host_prog = node_host
+else
+  node_host = vim.fn.exepath("neovim-node-host")
+  if node_host ~= "" then
+    vim.g.node_host_prog = node_host
+  end
 end
 
 -- bootstrap lazy.nvim, LazyVim and your plugins
