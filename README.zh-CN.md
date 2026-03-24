@@ -69,7 +69,7 @@ cd ~/.config/nvim
 
 ## Mosh 辅助脚本
 
-这个独立安装脚本会安装 `mosh`，并把 `mosh-connect` 部署到 `~/.local/bin/mosh-connect`。
+这个独立安装脚本会安装 `mosh`，把 `mosh-connect` 部署到 `~/.local/bin/mosh-connect`，并且在 macOS 上按需更新 `~/.zshenv`，让经由 SSH 拉起的 shell 也能找到 Homebrew 安装的 `mosh-server`。
 
 示例：
 

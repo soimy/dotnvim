@@ -69,7 +69,7 @@ Open Neovim and run:
 
 ## Mosh Helper
 
-The standalone installer provisions `mosh` and installs `mosh-connect` to `~/.local/bin/mosh-connect`.
+The standalone installer provisions `mosh`, installs `mosh-connect` to `~/.local/bin/mosh-connect`, and on macOS updates `~/.zshenv` if needed so SSH-launched shells can find Homebrew's `mosh-server`.
 
 Example:
 

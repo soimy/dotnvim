@@ -7,9 +7,14 @@ HOME_DIR="${HOME:?HOME is required}"
 LOCAL_BIN_DIR="$HOME_DIR/.local/bin"
 WRAPPER_PATH="$LOCAL_BIN_DIR/mosh-connect"
 SOURCE_WRAPPER="$ROOT_DIR/scripts/mosh-connect"
+ZSHENV_PATH="$HOME_DIR/.zshenv"
 
 # shellcheck source=scripts/install/common.sh
 source "$ROOT_DIR/scripts/install/common.sh"
+
+brew_prefix() {
+  brew --prefix
+}
 
 install_mosh_package() {
   case "$(uname -s)" in
@@ -45,9 +50,41 @@ write_wrapper() {
   install -m 0755 "$SOURCE_WRAPPER" "$WRAPPER_PATH"
 }
 
+ensure_noninteractive_shell_path() {
+  [[ "$(uname -s)" == "Darwin" ]] || return 0
+
+  local prefix
+  prefix="$(brew_prefix)"
+
+  touch "$ZSHENV_PATH"
+
+  if ! grep -Fq "$prefix/bin" "$ZSHENV_PATH"; then
+    log "adding $prefix/bin to ~/.zshenv for ssh-launched mosh-server"
+    cat >>"$ZSHENV_PATH" <<EOF
+
+case ":\$PATH:" in
+  *":$prefix/bin:"*) ;;
+  *) export PATH="$prefix/bin:\$PATH" ;;
+esac
+EOF
+  fi
+
+  if ! grep -Fq "$prefix/sbin" "$ZSHENV_PATH"; then
+    log "adding $prefix/sbin to ~/.zshenv for ssh-launched mosh-server"
+    cat >>"$ZSHENV_PATH" <<EOF
+
+case ":\$PATH:" in
+  *":$prefix/sbin:"*) ;;
+  *) export PATH="$prefix/sbin:\$PATH" ;;
+esac
+EOF
+  fi
+}
+
 main() {
   install_mosh_package
   write_wrapper
+  ensure_noninteractive_shell_path
 
   cat <<EOF
 Installed mosh wrapper:
@@ -55,6 +92,9 @@ Installed mosh wrapper:
 
 Example:
   mosh-connect user@example.com
+
+macOS note:
+  ~/.zshenv was updated if needed so ssh-launched shells can find mosh-server.
 
 Remote note:
   The remote host also needs mosh-server available, usually by installing mosh.
