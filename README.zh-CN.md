@@ -28,7 +28,7 @@
 - Arch 上的 `pacman`
 - Fedora 上的 `dnf`
 
-在 Ubuntu / Debian 上，bootstrap 要求 `nvm` 位于 `~/.nvm/nvm.sh`，会先用 `nvm` 激活最新版本的 Node.js，并清理旧流程留下的 npm `prefix` 配置，再用这个运行时安装 `tree-sitter` CLI 等全局 npm 包，从而绕开 `apt` 自带 Node 版本过旧的问题。Linux 下的 bootstrap 也会补装 `unzip`，因为 Mason 安装 `stylua` 等工具时需要它。
+在 Ubuntu / Debian 上，bootstrap 要求 `nvm` 位于 `~/.nvm/nvm.sh`，会先用 `nvm` 激活最新版本的 Node.js，并清理旧流程留下的 npm `prefix` 配置，再用这个运行时安装 `tree-sitter` CLI 等全局 npm 包，从而绕开 `apt` 自带 Node 版本过旧的问题。Linux 下的 bootstrap 也会补装 `unzip` 和 `python3-venv`，因为 Mason 安装 `stylua`、`ruff` 等工具时需要它们。
 
 macOS 示例：
 

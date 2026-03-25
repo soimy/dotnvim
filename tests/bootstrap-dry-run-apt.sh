@@ -40,7 +40,7 @@ if ! grep -q '\[dry-run] sudo apt-get update' "$OUTPUT_FILE"; then
   exit 1
 fi
 
-if ! grep -q '\[dry-run] sudo apt-get install -y git curl neovim ripgrep fzf fd-find python3 python3-pip unzip' "$OUTPUT_FILE"; then
+if ! grep -q '\[dry-run] sudo apt-get install -y git curl neovim ripgrep fzf fd-find python3 python3-pip python3-venv unzip' "$OUTPUT_FILE"; then
   echo "expected apt dependency install in dry-run output"
   cat "$OUTPUT_FILE"
   exit 1

@@ -46,7 +46,7 @@ if ! grep -q '\[dotnvim] dotnvim bootstrap complete' "$OUTPUT_FILE"; then
   exit 1
 fi
 
-if ! grep -Eq '\[dry-run] sudo (apt-get install -y git curl neovim ripgrep fzf fd-find python3 python3-pip unzip|dnf install -y git curl neovim ripgrep fd-find fzf nodejs npm python3 python3-pip unzip tree-sitter-cli)' "$OUTPUT_FILE"; then
+if ! grep -Eq '\[dry-run] sudo (apt-get install -y git curl neovim ripgrep fzf fd-find python3 python3-pip python3-venv unzip|dnf install -y git curl neovim ripgrep fd-find fzf nodejs npm python3 python3-pip unzip tree-sitter-cli)' "$OUTPUT_FILE"; then
   echo "expected Linux dependency install to include unzip in dry-run output"
   exit 1
 fi
