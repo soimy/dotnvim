@@ -50,7 +50,13 @@ cd /Users/sym/.config/nvim
 - `prefix + g`：弹出 `lazygit`
 - `prefix + Enter`：弹出临时 shell
 - `prefix + s`：切换同步输入，适合并排 agent 或多面板批量执行命令
+- `prefix + D`：断开其他 tmux client，适合从桌面切到手机时避免不同宽度一起影响布局
 - `prefix + r`：重载配置
+
+## 移动设备连接说明
+
+- 默认关闭 `aggressive-resize`，并使用 `window-size latest`，减少手机和桌面之间来回切换时全屏 CLI 的异常换行。
+- 如果你准备从桌面切到移动端，先按一次 `prefix + D`，通常能避免旧 client 继续影响当前 window 尺寸。
 
 ## 插件
 

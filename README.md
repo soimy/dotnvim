@@ -33,7 +33,9 @@ On Ubuntu/Debian, the bootstrap script expects `nvm` at `~/.nvm/nvm.sh`, activat
 Example for macOS:
 
 ```bash
-brew install neovim fd ripgrep fzf lazygit tree-sitter
+brew tap laishulu/homebrew
+brew tap daipeihust/tap
+brew install neovim fd ripgrep fzf lazygit tree-sitter macism im-select
 ```
 
 ## Install
@@ -88,6 +90,7 @@ The remote host also needs `mosh-server` available, which usually means installi
 - Ruby and Perl Neovim providers are disabled.
 - Some optional image preview features depend on extra system packages and are not required for normal coding workflows.
 - `lazygit` is treated as optional on some Linux distributions where the package may not exist in the default repo.
+- On macOS, bootstrap also installs `macism` and `im-select` so Neovim can switch back to an English input source outside insert mode.
 
 ## Agent Notes
 

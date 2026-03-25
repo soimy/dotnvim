@@ -26,7 +26,8 @@ set -g display-time 2500
 set -g status-interval 5
 set -g allow-rename off
 setw -g automatic-rename on
-setw -g aggressive-resize on
+setw -g aggressive-resize off
+setw -g window-size latest
 setw -g mode-keys vi
 
 set -g status-position bottom
@@ -49,6 +50,7 @@ bind - split-window -v -c "#{pane_current_path}"
 bind | split-window -h -c "#{pane_current_path}"
 bind c new-window -c "#{pane_current_path}"
 bind r source-file __HOME__/.config/tmux/tmux.conf \; display-message "tmux config reloaded"
+bind D detach-client -a \; display-message "detached other tmux clients"
 bind R command-prompt -I "#{pane_current_path}" "respawn-pane -k -c '%%'"
 bind Enter display-popup -E -w 80% -h 80% -d "#{pane_current_path}" "/bin/zsh -il"
 bind e new-window -c "#{pane_current_path}" "nvim"
@@ -93,3 +95,7 @@ set -g @yank_with_mouse "on"
 set-environment -g TMUX_PLUGIN_MANAGER_PATH "__HOME__/.config/tmux/plugins/"
 
 run-shell "if [ -x __HOME__/.config/tmux/plugins/tpm/tpm ]; then __HOME__/.config/tmux/plugins/tpm/tpm; fi"
+
+# Keep full-screen coding CLIs stable when reconnecting with different client sizes.
+setw -g aggressive-resize off
+setw -g window-size latest

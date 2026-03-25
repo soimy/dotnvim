@@ -50,6 +50,24 @@ if ! grep -Fq "$TMP_DIR/home/.config/tmux/tmux.conf" "$TARGET_FILE"; then
   exit 1
 fi
 
+if ! grep -Fq 'setw -g aggressive-resize off' "$TARGET_FILE"; then
+  echo "expected installed tmux config to disable aggressive-resize"
+  cat "$TARGET_FILE"
+  exit 1
+fi
+
+if ! grep -Fq 'setw -g window-size latest' "$TARGET_FILE"; then
+  echo "expected installed tmux config to use window-size latest"
+  cat "$TARGET_FILE"
+  exit 1
+fi
+
+if ! grep -Fq 'bind D detach-client -a' "$TARGET_FILE"; then
+  echo "expected installed tmux config to include detach-other-clients binding"
+  cat "$TARGET_FILE"
+  exit 1
+fi
+
 if [[ ! -x "$TPM_DIR/bin/install_plugins" ]]; then
   echo "expected TPM install_plugins helper at $TPM_DIR/bin/install_plugins"
   exit 1

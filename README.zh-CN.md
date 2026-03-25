@@ -33,7 +33,9 @@
 macOS 示例：
 
 ```bash
-brew install neovim fd ripgrep fzf lazygit tree-sitter
+brew tap laishulu/homebrew
+brew tap daipeihust/tap
+brew install neovim fd ripgrep fzf lazygit tree-sitter macism im-select
 ```
 
 ## 安装
@@ -88,6 +90,7 @@ mosh-connect user@example.com --ssh='ssh -p 2222'
 - Ruby 和 Perl 的 Neovim provider 默认关闭。
 - 某些图片预览能力依赖额外系统包，不影响日常编码。
 - 在部分 Linux 发行版里，`lazygit` 可能不在默认仓库中；脚本会把它当作可选项处理。
+- 在 macOS 上，bootstrap 也会安装 `macism` 和 `im-select`，保证 Neovim 退出插入模式后能切回英文输入源。
 
 ## Agent 约束
 
