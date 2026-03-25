@@ -5,6 +5,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export DOTNVIM_ROOT="$ROOT_DIR"
 export DOTNVIM_DRY_RUN=0
+export DOTNVIM_PACKAGE_MANAGER=""
 
 if [[ "${1:-}" == "--dry-run" ]]; then
   export DOTNVIM_DRY_RUN=1
@@ -25,14 +26,17 @@ main() {
       ;;
     Linux)
       if command -v apt-get >/dev/null 2>&1; then
+        export DOTNVIM_PACKAGE_MANAGER="apt"
         # shellcheck source=scripts/install/apt.sh
         source "$ROOT_DIR/scripts/install/apt.sh"
         install_apt
       elif command -v pacman >/dev/null 2>&1; then
+        export DOTNVIM_PACKAGE_MANAGER="pacman"
         # shellcheck source=scripts/install/pacman.sh
         source "$ROOT_DIR/scripts/install/pacman.sh"
         install_pacman
       elif command -v dnf >/dev/null 2>&1; then
+        export DOTNVIM_PACKAGE_MANAGER="dnf"
         # shellcheck source=scripts/install/dnf.sh
         source "$ROOT_DIR/scripts/install/dnf.sh"
         install_dnf

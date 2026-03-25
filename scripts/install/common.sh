@@ -75,6 +75,11 @@ ensure_fd_alias() {
 }
 
 ensure_tree_sitter_cli() {
+  if [[ "${DOTNVIM_PACKAGE_MANAGER:-}" == "apt" ]]; then
+    log "installing tree-sitter CLI via npm on apt-based systems"
+    install_npm_global tree-sitter-cli
+    return 0
+  fi
   if is_dry_run; then
     return 0
   fi
@@ -85,7 +90,66 @@ ensure_tree_sitter_cli() {
   install_npm_global tree-sitter-cli
 }
 
+ensure_node_runtime() {
+  if [[ "${DOTNVIM_PACKAGE_MANAGER:-}" != "apt" ]]; then
+    return 0
+  fi
+
+  if [[ "${DOTNVIM_NODE_RUNTIME_READY:-0}" == "1" ]]; then
+    return 0
+  fi
+
+  local nvm_dir="${NVM_DIR:-$HOME/.nvm}"
+
+  if is_dry_run; then
+    log "activating latest Node.js via nvm on apt-based systems"
+    printf '[dry-run] sanitize ~/.npmrc for nvm\n'
+    printf '[dry-run] export NVM_DIR=%s\n' "$nvm_dir"
+    printf '[dry-run] . %s/nvm.sh\n' "$nvm_dir"
+    printf '[dry-run] npm config delete prefix\n'
+    printf '[dry-run] npm config delete globalconfig\n'
+    printf '[dry-run] nvm install node\n'
+    printf '[dry-run] nvm alias default node\n'
+    printf '[dry-run] nvm use --delete-prefix node\n'
+    export DOTNVIM_NODE_RUNTIME_READY=1
+    return 0
+  fi
+
+  local npmrc="$HOME/.npmrc"
+  if [[ -f "$npmrc" ]] && grep -Eq '^(prefix|globalconfig)=' "$npmrc"; then
+    log "removing npm prefix settings that conflict with nvm"
+    local sanitized_npmrc
+    sanitized_npmrc="$(mktemp)"
+    grep -Ev '^(prefix|globalconfig)=' "$npmrc" >"$sanitized_npmrc" || true
+    if [[ -s "$sanitized_npmrc" ]]; then
+      mv "$sanitized_npmrc" "$npmrc"
+    else
+      rm -f "$npmrc" "$sanitized_npmrc"
+    fi
+  fi
+
+  [[ -s "$nvm_dir/nvm.sh" ]] || die "nvm is required on Ubuntu/Debian; expected $nvm_dir/nvm.sh"
+
+  # shellcheck source=/dev/null
+  . "$nvm_dir/nvm.sh"
+  command -v nvm >/dev/null 2>&1 || die "failed to load nvm from $nvm_dir/nvm.sh"
+
+  log "activating latest Node.js via nvm on apt-based systems"
+  npm config delete prefix >/dev/null 2>&1 || true
+  npm config delete globalconfig >/dev/null 2>&1 || true
+  nvm install node
+  nvm alias default node
+  nvm use --delete-prefix node
+
+  command -v npm >/dev/null 2>&1 || die "npm not found after activating Node.js via nvm"
+  export DOTNVIM_NODE_RUNTIME_READY=1
+}
+
 ensure_npm_prefix() {
+  ensure_node_runtime
+  if [[ "${DOTNVIM_PACKAGE_MANAGER:-}" == "apt" ]]; then
+    return 0
+  fi
   if is_dry_run; then
     log "configuring npm global prefix to ~/.local"
     printf '[dry-run] npm config set prefix %s\n' "$HOME/.local"
@@ -111,6 +175,7 @@ install_npm_global() {
 }
 
 install_node_provider() {
+  ensure_node_runtime
   if is_dry_run; then
     log "installing Neovim node provider and Mermaid CLI"
     install_npm_global neovim @mermaid-js/mermaid-cli

@@ -28,6 +28,8 @@ Supported package managers:
 - `pacman` on Arch
 - `dnf` on Fedora
 
+On Ubuntu/Debian, the bootstrap script expects `nvm` at `~/.nvm/nvm.sh`, activates the latest Node.js with `nvm`, clears incompatible npm `prefix` settings from older runs, and uses that runtime for global npm packages such as the `tree-sitter` CLI. This avoids the outdated Node.js versions shipped by `apt`. The Linux bootstrap also installs `unzip`, which Mason needs for some tools such as `stylua`.
+
 Example for macOS:
 
 ```bash

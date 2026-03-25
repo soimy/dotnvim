@@ -32,11 +32,21 @@ chmod +x "$TMP_DIR/bin/"*
 
 OUTPUT_FILE="$TMP_DIR/output.txt"
 
-if PATH="$TMP_DIR/bin:/usr/bin:/bin" HOME="$TMP_DIR/home" bash "$ROOT_DIR/bootstrap.sh" --dry-run >"$OUTPUT_FILE" 2>&1; then
+if PATH="$TMP_DIR/bin:/bin" HOME="$TMP_DIR/home" /bin/bash "$ROOT_DIR/bootstrap.sh" --dry-run >"$OUTPUT_FILE" 2>&1; then
   echo "bootstrap dry-run exited successfully"
   cat "$OUTPUT_FILE"
 else
   echo "bootstrap dry-run failed unexpectedly"
   cat "$OUTPUT_FILE"
+  exit 1
+fi
+
+if ! grep -q '\[dotnvim] dotnvim bootstrap complete' "$OUTPUT_FILE"; then
+  echo "expected bootstrap completion log in dry-run output"
+  exit 1
+fi
+
+if ! grep -Eq '\[dry-run] sudo (apt-get install -y git curl neovim ripgrep fzf fd-find python3 python3-pip unzip|dnf install -y git curl neovim ripgrep fd-find fzf nodejs npm python3 python3-pip unzip tree-sitter-cli)' "$OUTPUT_FILE"; then
+  echo "expected Linux dependency install to include unzip in dry-run output"
   exit 1
 fi
