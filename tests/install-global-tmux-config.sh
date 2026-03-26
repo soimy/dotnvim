@@ -11,16 +11,24 @@ LOG_FILE="$TMP_DIR/commands.log"
 
 cat >"$TMP_DIR/bin/git" <<'EOF'
 #!/usr/bin/env bash
+set -euo pipefail
+
 printf 'git %s\n' "$*" >>"$LOG_FILE"
-if [[ "${1:-}" == "clone" ]]; then
-  target="${@: -1}"
-  mkdir -p "$target/.git" "$target/bin"
-  cat >"$target/bin/install_plugins" <<'INNER'
+
+if [[ "${1:-}" != "clone" ]]; then
+  echo "unexpected git invocation: $*" >&2
+  exit 1
+fi
+
+target="${@: -1}"
+mkdir -p "$target/.git" "$target/bin"
+
+cat >"$target/bin/install_plugins" <<'INNER_EOF'
 #!/usr/bin/env bash
 printf 'install_plugins XDG_CONFIG_HOME=%s TMUX_PLUGIN_MANAGER_PATH=%s\n' "${XDG_CONFIG_HOME:-}" "${TMUX_PLUGIN_MANAGER_PATH:-}" >>"$LOG_FILE"
-INNER
-  chmod +x "$target/bin/install_plugins"
-fi
+INNER_EOF
+
+chmod +x "$target/bin/install_plugins"
 EOF
 
 chmod +x "$TMP_DIR/bin/git"
@@ -50,8 +58,20 @@ if ! grep -Fq "$TMP_DIR/home/.config/tmux/tmux.conf" "$TARGET_FILE"; then
   exit 1
 fi
 
+if ! grep -Fq 'bind -T root WheelUpPane if-shell -F -t = "#{alternate_on}" "send-keys -M" "select-pane -t =; copy-mode -e; send-keys -M"' "$TARGET_FILE"; then
+  echo "expected root WheelUpPane binding in generated tmux config"
+  cat "$TARGET_FILE"
+  exit 1
+fi
+
 if ! grep -Fq 'setw -g aggressive-resize off' "$TARGET_FILE"; then
   echo "expected installed tmux config to disable aggressive-resize"
+  cat "$TARGET_FILE"
+  exit 1
+fi
+
+if ! grep -Fq 'bind -T root WheelDownPane if-shell -F -t = "#{alternate_on}" "send-keys -M" "select-pane -t =; send-keys -M"' "$TARGET_FILE"; then
+  echo "expected root WheelDownPane binding in generated tmux config"
   cat "$TARGET_FILE"
   exit 1
 fi
@@ -62,8 +82,20 @@ if ! grep -Fq 'set -g mouse on' "$TARGET_FILE"; then
   exit 1
 fi
 
+if ! grep -Fq 'bind -T copy-mode-vi WheelUpPane select-pane \; send-keys -X -N 1 scroll-up' "$TARGET_FILE"; then
+  echo "expected copy-mode-vi WheelUpPane line-scroll binding"
+  cat "$TARGET_FILE"
+  exit 1
+fi
+
 if ! grep -Fq 'setw -g window-size latest' "$TARGET_FILE"; then
   echo "expected installed tmux config to use window-size latest"
+  cat "$TARGET_FILE"
+  exit 1
+fi
+
+if ! grep -Fq 'bind -T copy-mode WheelDownPane select-pane \; send-keys -X -N 1 scroll-down' "$TARGET_FILE"; then
+  echo "expected copy-mode WheelDownPane line-scroll binding"
   cat "$TARGET_FILE"
   exit 1
 fi
@@ -97,13 +129,19 @@ if [[ ! -x "$TPM_DIR/bin/install_plugins" ]]; then
   exit 1
 fi
 
-if ! grep -q 'git clone --depth 1 https://github.com/tmux-plugins/tpm' "$LOG_FILE"; then
+if ! grep -Fq 'git clone --depth 1 https://github.com/tmux-plugins/tpm' "$LOG_FILE"; then
   echo "expected TPM clone command"
   cat "$LOG_FILE"
   exit 1
 fi
 
-if ! grep -q "install_plugins XDG_CONFIG_HOME=$TMP_DIR/home/.config TMUX_PLUGIN_MANAGER_PATH=$TMP_DIR/home/.config/tmux/plugins/" "$LOG_FILE"; then
+if ! grep -Fq 'bind -T copy-mode WheelUpPane select-pane \; send-keys -X -N 1 scroll-up' "$TARGET_FILE"; then
+  echo "expected copy-mode WheelUpPane line-scroll binding"
+  cat "$TARGET_FILE"
+  exit 1
+fi
+
+if ! grep -Fq "install_plugins XDG_CONFIG_HOME=$TMP_DIR/home/.config TMUX_PLUGIN_MANAGER_PATH=$TMP_DIR/home/.config/tmux/plugins/" "$LOG_FILE"; then
   echo "expected install_plugins invocation with tmux environment"
   cat "$LOG_FILE"
   exit 1
@@ -134,5 +172,4 @@ if ! grep -Fq 'legacy tmux config' "$BACKUP_FILE"; then
   cat "$BACKUP_FILE"
   exit 1
 fi
-
 echo "tmux installer smoke test passed"
