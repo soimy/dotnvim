@@ -56,6 +56,12 @@ if ! grep -Fq 'setw -g aggressive-resize off' "$TARGET_FILE"; then
   exit 1
 fi
 
+if ! grep -Fq 'set -g mouse on' "$TARGET_FILE"; then
+  echo "expected installed tmux config to keep mouse capture enabled by default"
+  cat "$TARGET_FILE"
+  exit 1
+fi
+
 if ! grep -Fq 'setw -g window-size latest' "$TARGET_FILE"; then
   echo "expected installed tmux config to use window-size latest"
   cat "$TARGET_FILE"
@@ -64,6 +70,24 @@ fi
 
 if ! grep -Fq 'bind D detach-client -a' "$TARGET_FILE"; then
   echo "expected installed tmux config to include detach-other-clients binding"
+  cat "$TARGET_FILE"
+  exit 1
+fi
+
+if ! grep -Fq "bind m if -F '#{mouse}'" "$TARGET_FILE"; then
+  echo "expected installed tmux config to include mouse toggle binding"
+  cat "$TARGET_FILE"
+  exit 1
+fi
+
+if ! grep -Fq 'send-keys -X -N 1 scroll-up' "$TARGET_FILE"; then
+  echo "expected installed tmux config to slow wheel-up scrolling to 1 line"
+  cat "$TARGET_FILE"
+  exit 1
+fi
+
+if ! grep -Fq 'send-keys -X -N 1 scroll-down' "$TARGET_FILE"; then
+  echo "expected installed tmux config to slow wheel-down scrolling to 1 line"
   cat "$TARGET_FILE"
   exit 1
 fi

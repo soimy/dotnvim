@@ -51,12 +51,15 @@ cd /Users/sym/.config/nvim
 - `prefix + Enter`：弹出临时 shell
 - `prefix + s`：切换同步输入，适合并排 agent 或多面板批量执行命令
 - `prefix + D`：断开其他 tmux client，适合从桌面切到手机时避免不同宽度一起影响布局
+- `prefix + m`：切换 tmux 鼠标捕获；默认开启，但滚轮已调慢到 1 行/次
 - `prefix + r`：重载配置
 
 ## 移动设备连接说明
 
 - 默认关闭 `aggressive-resize`，并使用 `window-size latest`，减少手机和桌面之间来回切换时全屏 CLI 的异常换行。
+- 默认保留 `mouse`，但把 tmux 的滚轮步长从默认的 5 行调到 1 行，减少移动端触摸滚动过快、跳跃或难以控制的问题。
 - 如果你准备从桌面切到移动端，先按一次 `prefix + D`，通常能避免旧 client 继续影响当前 window 尺寸。
+- 如果你觉得某些终端下鼠标捕获仍然不顺手，随时可以按 `prefix + m` 临时关闭，改用终端自身的滚动。
 
 ## 插件
 
