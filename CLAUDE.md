@@ -18,7 +18,9 @@ After bootstrap, run `:checkhealth` inside Neovim to verify.
 
 ### Tests
 ```bash
-bash tests/bootstrap-dry-run.sh   # Smoke test: runs bootstrap with stubbed binaries, asserts exit 0
+bash tests/bootstrap-dry-run.sh        # Smoke test: runs bootstrap with stubbed binaries, asserts exit 0
+bash tests/bootstrap-dry-run-apt.sh    # apt + nvm path
+bash tests/bootstrap-dry-run-fish.sh   # fish environment: fnm replaces nvm
 ```
 
 ### Formatting
@@ -73,6 +75,8 @@ init.lua
 - **ltex-ls-plus path is hardcoded**: `.tools/ltex/ltex-ls-plus-18.6.1/bin/ltex-ls-plus` — update `spellcheck.lua` if the version changes.
 - **lazygit is optional** on apt/dnf systems; bootstrap won't fail without it.
 - **dotnet tools** (csharpier, fantomas) emit Mason warnings if `dotnet` is absent — expected.
+- **fish environment → fnm instead of nvm**: when fish is the active shell (fish binary + `~/.config/fish/` configs, or fish login shell), `bootstrap.sh` installs `fnm` to `~/.local/bin` if missing, writes `~/.config/fish/conf.d/fnm.fish` (`fnm env --use-on-cd | source`), comments out nvm source lines in `~/.config/fish/config.fish` with a backup, and manages the Node runtime with fnm's LTS. bash/zsh keep using nvm.
+- **Graceful degradation on missing deps**: the python provider step warns and skips when `python3 -m pip` is unavailable (e.g., Arch without `python-pip`), and `sudo_run` prints a clear hint when a privileged command fails (e.g., non-interactive shell without a password); bootstrap fails with a readable message rather than a bare traceback.
 - **Bazzite/rpm-ostree**: run inside a distrobox Fedora 43 container.
 - Ruby and Perl providers are intentionally disabled in `init.lua`.
 

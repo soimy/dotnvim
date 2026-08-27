@@ -32,7 +32,7 @@ chmod +x "$TMP_DIR/bin/"*
 
 OUTPUT_FILE="$TMP_DIR/output.txt"
 
-if PATH="$TMP_DIR/bin:/bin" HOME="$TMP_DIR/home" /bin/bash "$ROOT_DIR/bootstrap.sh" --dry-run >"$OUTPUT_FILE" 2>&1; then
+if PATH="$TMP_DIR/bin:/bin" HOME="$TMP_DIR/home" SHELL=/bin/bash DOTNVIM_FORCE_PACKAGE_MANAGER=dnf /bin/bash "$ROOT_DIR/bootstrap.sh" --dry-run >"$OUTPUT_FILE" 2>&1; then
   echo "bootstrap dry-run exited successfully"
   cat "$OUTPUT_FILE"
 else

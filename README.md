@@ -30,6 +30,8 @@ Supported package managers:
 
 On Ubuntu/Debian, the bootstrap script expects `nvm` at `~/.nvm/nvm.sh`, activates the latest Node.js with `nvm`, clears incompatible npm `prefix` settings from older runs, and uses that runtime for global npm packages such as the `tree-sitter` CLI. This avoids the outdated Node.js versions shipped by `apt`. The Linux bootstrap also installs `unzip` and `python3-venv`, which Mason needs for tools such as `stylua` and `ruff`.
 
+When a fish environment is detected (fish is installed and `~/.config/fish/*` configs exist, or fish is the login shell), bootstrap uses **`fnm` instead of `nvm`**, because nvm's init script is bash-only and cannot be sourced from fish. It installs `fnm` to `~/.local/bin` if missing, writes `~/.config/fish/conf.d/fnm.fish` to enable `fnm env --use-on-cd | source` (and to add `~/.local/bin` to the fish PATH), and comments out any nvm sourcing lines in `~/.config/fish/config.fish` (with a backup). The Node runtime used by bootstrap's own npm steps (the `tree-sitter` CLI and the Neovim node provider) then comes from the `fnm`-managed latest LTS. bash/zsh setups keep using nvm as before.
+
 Example for macOS:
 
 ```bash
@@ -57,6 +59,12 @@ Preview without changing the machine:
 
 ```bash
 ./bootstrap.sh --dry-run
+```
+
+To force a specific package manager (e.g. when several exist on the machine), set it up front:
+
+```bash
+DOTNVIM_FORCE_PACKAGE_MANAGER=apt ./bootstrap.sh   # apt | dnf | pacman | macos
 ```
 
 Install the standalone `mosh` helper:

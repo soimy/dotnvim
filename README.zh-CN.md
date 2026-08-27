@@ -30,6 +30,8 @@
 
 在 Ubuntu / Debian 上，bootstrap 要求 `nvm` 位于 `~/.nvm/nvm.sh`，会先用 `nvm` 激活最新版本的 Node.js，并清理旧流程留下的 npm `prefix` 配置，再用这个运行时安装 `tree-sitter` CLI 等全局 npm 包，从而绕开 `apt` 自带 Node 版本过旧的问题。Linux 下的 bootstrap 也会补装 `unzip` 和 `python3-venv`，因为 Mason 安装 `stylua`、`ruff` 等工具时需要它们。
 
+当检测到 fish 环境（本机装有 fish 且配置了 `~/.config/fish/*`，或以 fish 作为登录 shell）时，bootstrap 会改用 **`fnm` 代替 `nvm`** 来管理 Node，因为 nvm 的初始化脚本是 bash 语法、无法在 fish 里 source。脚本会：缺少 `fnm` 时自动安装到 `~/.local/bin`；写入 `~/.config/fish/conf.d/fnm.fish` 启用 `fnm env --use-on-cd | source`（并确保 `~/.local/bin` 在 fish 的 PATH 里）；同时把 `~/.config/fish/config.fish` 中对 nvm 的 source 行注释掉（会先备份）。bootstrap 自身用到的 Node（如 `tree-sitter` CLI 与 Neovim 的 node provider）在这种情况下改由 fnm 管理的 LTS 版本提供；bash/zsh 环境仍按原样使用 nvm。
+
 macOS 示例：
 
 ```bash
@@ -57,6 +59,12 @@ cd ~/.config/nvim
 
 ```bash
 ./bootstrap.sh --dry-run
+```
+
+也可以手动指定包管理器（比如机器上装了多个时）：
+
+```bash
+DOTNVIM_FORCE_PACKAGE_MANAGER=apt ./bootstrap.sh   # apt | dnf | pacman | macos
 ```
 
 安装独立的 `mosh` 辅助脚本：

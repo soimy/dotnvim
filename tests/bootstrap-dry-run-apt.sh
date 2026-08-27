@@ -26,7 +26,7 @@ echo "stub python3 $*"'
 
 OUTPUT_FILE="$TMP_DIR/output.txt"
 
-if PATH="$TMP_DIR/bin:/usr/bin:/bin" HOME="$TMP_DIR/home" /bin/bash "$ROOT_DIR/bootstrap.sh" --dry-run >"$OUTPUT_FILE" 2>&1; then
+if PATH="$TMP_DIR/bin:/usr/bin:/bin" HOME="$TMP_DIR/home" SHELL=/bin/bash /bin/bash "$ROOT_DIR/bootstrap.sh" --dry-run >"$OUTPUT_FILE" 2>&1; then
   echo "bootstrap apt dry-run exited successfully"
 else
   echo "bootstrap apt dry-run failed unexpectedly"
