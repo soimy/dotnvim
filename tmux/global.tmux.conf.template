@@ -9,7 +9,25 @@ set -g default-shell "/bin/zsh"
 set -g default-command "exec /bin/zsh -il"
 
 set -g default-terminal "tmux-256color"
-set -as terminal-features ",xterm-256color:RGB,screen-256color:RGB,tmux-256color:RGB,xterm-kitty:RGB,ghostty:RGB,wezterm:RGB,alacritty:RGB,foot*:RGB"
+# Terminal capabilities. tmux only ships built-in terminal-features defaults for
+# xterm*/screen*/rxvt*: there is no foot entry before 3.7, and even on 3.7 the built-in
+# foot table does not fire for the terminal name foot.ini reports. Without this, foot
+# gets no clipboard, cursor-style, sync or hyperlink detection at all. The list mirrors
+# tmux's own "foot" entry in tty-features.c. foot.ini sets term=xterm-256color, so both
+# names are registered here.
+#
+# ORDER IS MEANINGFUL - DO NOT REORDER CASUALLY. tmux stops parsing a terminal-features
+# entry at the first feature name it does not recognise and silently drops the rest of
+# that entry (it only logs this under -v). hyperlinks and osc7 are absent from tmux 3.2a
+# (Ubuntu 22.04) and only exist in later releases, so they go last: everything before
+# them is already understood by 3.2a and 3.3a (Debian 12). Moving a newer name earlier
+# would silently disable sync/usstyle/overline/... on those machines.
+#
+# 256 and mouse are omitted on purpose: foot's terminfo already provides colors#256 and
+# kmous=\E[< (SGR mouse), while the mouse feature would downgrade it to \E[M.
+set -as terminal-features ",foot*:RGB:bpaste:clipboard:ccolour:cstyle:extkeys:focus:overline:strikethrough:sync:title:usstyle:hyperlinks:osc7"
+set -as terminal-features ",xterm-256color:RGB:bpaste:clipboard:ccolour:cstyle:extkeys:focus:overline:strikethrough:sync:title:usstyle:hyperlinks:osc7"
+set -as terminal-features ",screen-256color:RGB,tmux-256color:RGB,xterm-kitty:RGB,ghostty:RGB,wezterm:RGB,alacritty:RGB"
 
 set -sg escape-time 10
 set -g focus-events on
