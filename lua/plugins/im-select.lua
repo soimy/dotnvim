@@ -1,3 +1,8 @@
+-- macOS-only: auto-switch input method. Skip entirely on other platforms.
+if vim.uv.os_uname().sysname ~= "Darwin" then
+  return {}
+end
+
 return {
   {
     "keaising/im-select.nvim",

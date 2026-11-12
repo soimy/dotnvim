@@ -10,9 +10,11 @@ local function open_dashboard_new_file()
 end
 
 return {
+  -- noice provides the floating cmdline/input UI; keep it enabled
+  -- (disabling it makes ":" fall back to the plain bottom cmdline)
   {
     "folke/noice.nvim",
-    enabled = false,
+    enabled = true,
   },
   {
     "folke/snacks.nvim",

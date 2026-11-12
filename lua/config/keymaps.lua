@@ -8,5 +8,7 @@ vim.keymap.set("n", "<C-k>", "5gk", { desc = "Move Up x5" })
 vim.keymap.set("n", "<C-l>", "5l", { desc = "Move Right x5" })
 
 vim.keymap.set("n", "mm", "gcc", { desc = "Toggle Comment Line", remap = true })
+vim.keymap.set("x", "mm", "gc", { desc = "Toggle Comment Selection", remap = true })
+vim.keymap.set("x", "mm", "gc", { desc = "Toggle Comment Selection", remap = true })
 
 vim.keymap.set("i", "jj", "<Esc>", { desc = "Exit Insert Mode" })

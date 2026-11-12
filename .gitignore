@@ -10,3 +10,4 @@ foo.*
 .tools/
 data
 .DS_Store
+*.bak*
